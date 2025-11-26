@@ -1,7 +1,7 @@
 # Ex06 BMI Calculator
 ## Name: GOKUL SHARAN R
 ## Reg No: 212223040052
-## Date: 28/05/2025
+## Date: 
 
 ## AIM
 To develop a responsive and interactive Body Mass Index (BMI) Calculator using React that allows users to input their height and weight, and calculates their BMI to categorize their health status (e.g., Underweight, Normal, Overweight, Obese).
@@ -66,167 +66,66 @@ Create routing structure with react-router-dom:
 <li>Add styling using CSS or Tailwind.</li>
 
 ## PROGRAM
-## APP.js
+App.js
 ```
 import React, { useState } from 'react';
 import './App.css';
 
 function App() {
-  const [unit, setUnit] = useState('metric');
-  const [age, setAge] = useState(20);
-  const [gender, setGender] = useState('male');
-  const [height, setHeight] = useState(180);
-  const [weight, setWeight] = useState(80);
-  const [bmiResult, setBmiResult] = useState(null);
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
+  const [bmi, setBmi] = useState(null);
+  const [message, setMessage] = useState('');
 
   const calculateBMI = () => {
-    // BMI calculation: weight (kg) / (height (m))^2
-    const heightInMeters = height / 100;
-    const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
-    
-    // Determine BMI category
-    let category = '';
-    let percentage = 0;
-    
-    if (bmi < 18.5) {
-      category = 'Underweight';
-      percentage = Math.round((bmi / 18.5) * 100);
-    } else if (bmi >= 18.5 && bmi < 25) {
-      category = 'Healthy weight';
-      percentage = Math.round(((bmi - 18.5) / (25 - 18.5)) * 100);
-    } else if (bmi >= 25 && bmi < 30) {
-      category = 'Overweight';
-      percentage = Math.round(((bmi - 25) / (30 - 25)) * 100);
-    } else {
-      category = 'Obese';
-      percentage = Math.round(((bmi - 30) / (40 - 30)) * 100);
-    }
-    
-    // Calculate healthy weight range
-    const minHealthyWeight = (18.5 * heightInMeters * heightInMeters).toFixed(1);
-    const maxHealthyWeight = (25 * heightInMeters * heightInMeters).toFixed(1);
-    
-    // Calculate percentiles (simplified for demo)
-    const weightPercentile = Math.min(100, Math.round(50 + (bmi - 22) * 10));
-    const heightPercentile = Math.min(100, Math.round(50 + (height - 170) / 2));
-    
-    // Calculate Ponderal Index
-    const ponderalIndex = (weight / (heightInMeters * heightInMeters * heightInMeters)).toFixed(1);
-    
-    setBmiResult({
-      bmi,
-      category,
-      percentage,
-      weightPercentile,
-      heightPercentile,
-      minHealthyWeight,
-      maxHealthyWeight,
-      ponderalIndex
-    });
-  };
+    if (height > 0 && weight > 0) {
+      const heightInMeters = height / 100;
+      const bmiValue = weight / (heightInMeters * heightInMeters);
+      setBmi(bmiValue.toFixed(2));
 
-  const clearForm = () => {
-    setAge(20);
-    setGender('male');
-    setHeight(180);
-    setWeight(80);
-    setBmiResult(null);
+      if (bmiValue < 18.5) {
+        setMessage('Underweight');
+      } else if (bmiValue < 24.9) {
+        setMessage('Normal weight');
+      } else if (bmiValue < 29.9) {
+        setMessage('Overweight');
+      } else {
+        setMessage('Obese');
+      }
+    } else {
+      setBmi(null);
+      setMessage('Please enter valid height and weight.');
+    }
   };
 
   return (
-    <div className="calculator-container">
-      <header>
-        <h1>Calculator.net</h1>
-        <nav>
-          <span>home / fitness & health / bmi calculator</span>
-        </nav>
-      </header>
-
-      <main>
-        <h2>BMI Calculator</h2>
-        
-        <div className="unit-tabs">
-          <button className={unit === 'us' ? 'active' : ''} onClick={() => setUnit('us')}>US Units</button>
-          <button className={unit === 'metric' ? 'active' : ''} onClick={() => setUnit('metric')}>Metric Units</button>
-          <button className={unit === 'other' ? 'active' : ''} onClick={() => setUnit('other')}>Other Units</button>
+    <div className="container">
+      <h1>BMI Calculator</h1>
+      <div className="input-group">
+        <label>Height (cm):</label>
+        <input
+          type="number"
+          value={height}
+          onChange={(e) => setHeight(e.target.value)}
+        />
+      </div>
+      <div className="input-group">
+        <label>Weight (kg):</label>
+        <input
+          type="number"
+          value={weight}
+          onChange={(e) => setWeight(e.target.value)}
+        />
+      </div>
+      <button onClick={calculateBMI}>Calculate BMI</button>
+      {bmi && (
+        <div className="result">
+          <h2>Your BMI is: {bmi}</h2>
+          <p>Status: {message}</p>
         </div>
-
-        <div className="input-form">
-          <div className="input-group">
-            <label>Age</label>
-            <input 
-              type="number" 
-              value={age} 
-              onChange={(e) => setAge(e.target.value)} 
-              min="2" 
-              max="120" 
-            />
-            <span>ages: 2 - 120</span>
-          </div>
-
-          <div className="input-group">
-            <label>Gender</label>
-            <div className="gender-options">
-              <button 
-                className={gender === 'male' ? 'active' : ''}
-                onClick={() => setGender('male')}
-              >
-                Male
-              </button>
-              <button 
-                className={gender === 'female' ? 'active' : ''}
-                onClick={() => setGender('female')}
-              >
-                Female
-              </button>
-            </div>
-          </div>
-
-          <div className="input-group">
-            <label>Height</label>
-            <input 
-              type="number" 
-              value={height} 
-              onChange={(e) => setHeight(e.target.value)} 
-            />
-            <span>cm</span>
-          </div>
-
-          <div className="input-group">
-            <label>Weight</label>
-            <input 
-              type="number" 
-              value={weight} 
-              onChange={(e) => setWeight(e.target.value)} 
-            />
-            <span>kg</span>
-          </div>
-
-          <div className="action-buttons">
-            <button className="calculate" onClick={calculateBMI}>Calculate</button>
-            <button className="clear" onClick={clearForm}>Clear</button>
-          </div>
-        </div>
-
-        {bmiResult && (
-          <div className="result-section">
-            <h3>Result</h3>
-            <h4>BMI = {bmiResult.bmi} kg/m<sup>2</sup> ({bmiResult.percentage}%, {bmiResult.category})</h4>
-            
-            <ul>
-              <li>BMI = {bmiResult.bmi}</li>
-              <li>Weight-for-age percentile: {bmiResult.weightPercentile}%</li>
-              <li>Height-for-age percentile: {bmiResult.heightPercentile}%</li>
-              <li>Healthy BMI range: 19.1 - 27 kg/m<sup>2</sup></li>
-              <li>Healthy weight for the height: {bmiResult.minHealthyWeight} kg - {bmiResult.maxHealthyWeight} kg</li>
-              <li>Ponderal Index: {bmiResult.ponderalIndex} kg/m<sup>3</sup></li>
-            </ul>
-          </div>
-        )}
-      </main>
-
+      )}
       <footer>
-        <p>&copy; [SHANMUGAKARTHIK G] - [212223220105]</p>
+        Developed by Susithra B | Reg No: 212223220113
       </footer>
     </div>
   );
@@ -234,150 +133,73 @@ function App() {
 
 export default App;
 ```
-## APP.css
+App.css
 ```
 body {
   font-family: Arial, sans-serif;
-  line-height: 1.6;
+  background-color: #f0f4f7;
   margin: 0;
   padding: 0;
-  color: #333;
 }
 
-.calculator-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-header h1 {
-  color: #0066cc;
-  margin-bottom: 5px;
-}
-
-header nav {
-  color: #666;
-  font-size: 0.9em;
-  margin-bottom: 20px;
-}
-
-.unit-tabs {
-  display: flex;
-  margin-bottom: 20px;
-}
-
-.unit-tabs button {
-  padding: 8px 15px;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
-  border-right: none;
-  cursor: pointer;
-}
-
-.unit-tabs button:last-child {
-  border-right: 1px solid #ddd;
-}
-
-.unit-tabs button.active {
-  background: #0066cc;
-  color: white;
-}
-
-.input-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
+.container {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px #ccc;
+  text-align: center;
 }
 
 .input-group {
-  margin-bottom: 15px;
+  margin: 20px 0;
+  text-align: left;
 }
 
-.input-group label {
+label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
 }
 
-.input-group input {
-  width: 100px;
+input[type="number"] {
+  width: 100%;
   padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  font-size: 16px;
 }
 
-.gender-options {
-  display: flex;
-}
-
-.gender-options button {
-  padding: 8px 15px;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
-  cursor: pointer;
-}
-
-.gender-options button.active {
-  background: #0066cc;
-  color: white;
-}
-
-.action-buttons {
-  grid-column: span 2;
-  display: flex;
-  gap: 10px;
-}
-
-.action-buttons button {
+button {
   padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.action-buttons .calculate {
-  background: #0066cc;
+  font-size: 16px;
+  margin-top: 10px;
+  background-color: #1976d2;
   color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.action-buttons .clear {
-  background: #f0f0f0;
-  color: #333;
+button:hover {
+  background-color: #0d47a1;
 }
 
-.result-section {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #ddd;
-}
-
-.result-section h4 {
-  color: #0066cc;
-}
-
-.result-section ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.result-section li {
-  margin-bottom: 8px;
+.result {
+  margin-top: 20px;
 }
 
 footer {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid #ddd;
-  text-align: center;
-  font-size: 0.9em;
-  color: #666;
+  margin-top: 30px;
+  font-size: 14px;
+  color: #555;
 }
 ```
+
 ## OUTPUT
-![alt text](BMI.png)
-![alt text](<Screenshot (54).png>)
-![alt text](<Screenshot (57).png>)
-![alt text](<Screenshot (56).png>)
+![image](https://github.com/user-attachments/assets/fdfff3db-51c8-4548-85d5-260d7279822f)
+
+
+
+
 ## RESULT
 The BMI Calculator successfully takes user input for height and weight, performs the BMI calculation in real-time using React state and event handling, and displays the BMI value along with the corresponding health category.
