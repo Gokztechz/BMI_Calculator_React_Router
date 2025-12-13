@@ -125,7 +125,7 @@ function App() {
         </div>
       )}
       <footer>
-        Developed by Susithra B | Reg No: 212223220113
+        Developed by GOKUL SHARAN R | Reg No: 212223040052
       </footer>
     </div>
   );
